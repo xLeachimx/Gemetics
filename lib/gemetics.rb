@@ -37,12 +37,16 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
 			# mate and replace
-			results = mates[0].mate(mates[1])
-			replace = Array.new(2, Random.new.rand(population.size()))
-			# don't replace same org
-			replace[1] = Random.new.rand(population.size())while(replace[1] == replace[0])
-			population[replace[0]] = results[0]
-			population[replace[1]] = results[1]
+			reaplaced = []
+			for i in 0...results.size()
+				results[i].mutate() if Random.new.rand() < options[:mutation_percent]
+				temp = Random.new.rand(population.size())
+				while(!replaced.includes?(temp)) do
+					temp = Random.new.rand(population.size())
+				end
+				replaced.append(temp)
+				population[replaced[-1]] = results[i]
+			end
 		else
 			# Repalce every single organism
 			needed = population.size()
@@ -53,11 +57,11 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 
 				# mate and put them into new pop
 				results = mates[0].mate(mates[1])
-				results[0].mutate() if Random.new.rand() < options[:mutation_percent]
-				results[1].mutate() if Random.new.rand() < options[:mutation_percent]
-				newPopulation[have] = results[0]
-				newPopulation[have+1] = results[1] if (have+1) < needed
-        have += 2
+				for i in 0...results.size()
+					results[i].mutate() if Random.new.rand() < options[:mutation_percent]
+					newPopulation[have+i] = result[i] if (have+i) < needed
+				end
+				have += results.size()
 			end
 			population = newPopulation
 		end
