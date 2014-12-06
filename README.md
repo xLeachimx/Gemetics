@@ -53,7 +53,7 @@ def default_GA_options()
 	 genMax: 1000,
 	 selectionStyle: 'tournament',
 	 mutation_percent: 0.05,
-   debug: false,
+	 debug: false,
   }
 end
 ```
@@ -61,3 +61,15 @@ end
 =======
 Use
 =======
+
+To run a genetic algorithm call this function
+
+```ruby
+runAlgorithm(initialPopulation, eval, threshold, options)
+```
+
+Where
+* intialPopulation is a random population of your custom subclass
+* eval is your custom evaluation method
+* threshold is the desired minimum value of fitness to be considered passing
+* options is the options you wish to run the GA with(nil resorts to default)
