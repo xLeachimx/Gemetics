@@ -1,6 +1,6 @@
 # Contains all testing materials
 
-require 'lib/Gemetics'
+require 'Gemetics'
 
 class GeneticString < GeneticObject
 	attr_accessor :chromosome
@@ -45,4 +45,17 @@ def stringFitness(gs)
 		end
 	end
 	return offCount
+end
+
+def evaluationPopulation(population)
+  for i in population
+    i.fitness = stringFitness(i)
+  end
+end
+
+def runTest()
+  options = default_GA_options
+  options[:debug] = true
+  options[:greaterBetter] = false
+  runAlgorithm(Array.new(100, GeneticString.new), method(:evaluationPopulation), 0, options)
 end
