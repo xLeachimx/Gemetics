@@ -4,6 +4,7 @@ default_GA_options = {
 	:genMax = 1000
 	:selectionStyle = 'tournament'
 	:mutation_percent = .05
+  :debug = false
 }
 
 
@@ -16,7 +17,9 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	bestCanidate = nil
 	population = initialPopulation
 	while(!exceedThreshold(options[:greaterBetter], bestCanidate.fitness, threshold) && currentGen < options[:genMax]) do
-
+    if(options[:debug])
+      puts bestCanidate
+    end
 		# evaluate the population
 		eval.call(population)
 		if(options[:greaterBetter])
