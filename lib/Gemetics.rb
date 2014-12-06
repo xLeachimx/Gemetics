@@ -8,6 +8,7 @@ default_GA_options = {
 
 
 def runAlgorithm(initialPopulation, eval, threshold, options)
+  # make sure options is assigned
 	if(options == nil)
 		options = default_GA_options
 	end

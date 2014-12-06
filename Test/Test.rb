@@ -1,3 +1,5 @@
+# Contains all testing materials
+
 require 'lib/Gemetics'
 
 class GeneticString < GeneticObject
