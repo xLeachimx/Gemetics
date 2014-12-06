@@ -68,6 +68,7 @@ Where
 * eval is your custom evaluation method
 * threshold is the desired minimum value of fitness to be considered passing
 * options is the options you wish to run the GA with(nil resorts to default)
+
 =======
 Options
 =======
