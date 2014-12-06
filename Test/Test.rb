@@ -3,7 +3,7 @@ require 'lib/Gemetics'
 class GeneticString < GeneticObject
 	attr_accessor :chromosome
 
-	def initialize():
+	def initialize()
 		@chromosome = ""
 		for i in 0...5
 			possibles = ('a'..'z').to_a
@@ -12,11 +12,11 @@ class GeneticString < GeneticObject
 		end
 	end
 
-	def intialize(str):
+	def intialize(str)
 		@chromosome = str
 	end
 
-	def mate(other):
+	def mate(other)
 		crossPoint = Random.new.rand(@chromosome.length())
 		results = Array.new(2, "")
 		for i in 0...crossPoint
@@ -26,7 +26,7 @@ class GeneticString < GeneticObject
 		return results
 	end
 
-	def mutate():
+	def mutate()
 		possibles = ('a'..'z').to_a
 		selection = Random.new.rand(possibles.size())
 		location = Random.new.rand(@chromosome.length())
@@ -34,7 +34,7 @@ class GeneticString < GeneticObject
 	end
 end
 
-def stringFitness(gs):
+def stringFitness(gs)
 	offCount = 0
 	correct = "hello"
 	for i in 0...correct.size()
