@@ -1,6 +1,5 @@
 Gemetics
 ========
-
 A Ruby gem which simplifies the process of making genetic algorithms
 
 ========
@@ -13,7 +12,6 @@ gem install gemetics
 ========
 Including in project
 ========
-
 ```ruby
 require 'gemetics'
 ```
@@ -21,7 +19,6 @@ require 'gemetics'
 ========
 Before Using
 ========
-
 First you need to create a custom subclass of the GeneticObject class
 
 ```ruby
@@ -61,7 +58,6 @@ end
 =======
 Use
 =======
-
 To run a genetic algorithm call this function
 
 ```ruby
@@ -69,9 +65,32 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	...
 end
 ```
+Returns the best canidate solution when done
 
 Where
 * intialPopulation is a random population of your custom subclass
 * eval is your custom evaluation method
 * threshold is the desired minimum value of fitness to be considered passing
 * options is the options you wish to run the GA with(nil resorts to default)
+
+
+=======
+Options
+=======
+|Option             |Default     |Purpose                                                                 |
+|:-----------------:|:----------:|:-----------------------------------------------------------------------|
+|greaterBetter      |true        |Determines if greater fitness values are better                         |
+|totalPopReplace    |true        |Determines if population should be completly replace between generations|
+|genMax             |1000        |Maximum generations allowed                                             |
+|selectionStyle     |'tournament'|Determines selection type                                               |
+|mutation_percent   |0.05        |Determines percentage of offspring that are mutated                     |
+|debug              |false       |If true will output debug info                                          |
+
+|Option             |Values(Possible)      |
+|:-----------------:|:--------------------:|
+|greaterBetter      |true/false            |
+|totalPopReplace    |true/false            |
+|genMax             |integer > 0           |
+|selectionStyle     |'tournament'/'best'   |
+|mutation_percent   |float >= 0            |
+|debug              |true/false            |
