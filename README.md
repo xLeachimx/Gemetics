@@ -1,21 +1,18 @@
 Gemetics
 ========
 A Ruby gem which simplifies the process of making genetic algorithms
-
 ========
 Installation
 ========
 ```
 gem install gemetics
 ```
-
 ========
 Including in project
 ========
 ```ruby
 require 'gemetics'
 ```
-
 ========
 Before Using
 ========
@@ -54,7 +51,6 @@ def default_GA_options()
   }
 end
 ```
-
 =======
 Use
 =======
@@ -72,8 +68,6 @@ Where
 * eval is your custom evaluation method
 * threshold is the desired minimum value of fitness to be considered passing
 * options is the options you wish to run the GA with(nil resorts to default)
-
-
 =======
 Options
 =======
