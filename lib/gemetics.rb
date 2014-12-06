@@ -5,7 +5,7 @@ def default_GA_options()
 	 genMax: 1000,
 	 selectionStyle: 'tournament',
 	 mutation_percent: 0.05,
-   debug: false,
+	 debug: false,
   }
 end
 
