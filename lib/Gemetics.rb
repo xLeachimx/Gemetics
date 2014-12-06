@@ -1,12 +1,13 @@
-default_GA_options = {
-	:greaterBetter = true
-	:totalPopReplace = true
-	:genMax = 1000
-	:selectionStyle = 'tournament'
-	:mutation_percent = .05
-  :debug = false
-}
-
+def default_GA_options()
+  return {
+	 greaterBetter: true,
+	 totalPopReplace: true,
+	 genMax: 1000,
+	 selectionStyle: 'tournament',
+	 mutation_percent: 0.05,
+   debug: false,
+  }
+end
 
 def runAlgorithm(initialPopulation, eval, threshold, options)
   # make sure options is assigned
@@ -14,14 +15,15 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 		options = default_GA_options
 	end
 	currentGen = 0
-	bestCanidate = nil
+	bestCanidate = initialPopulation[0]
 	population = initialPopulation
 	while(!exceedThreshold(options[:greaterBetter], bestCanidate.fitness, threshold) && currentGen < options[:genMax]) do
     if(options[:debug])
-      puts bestCanidate
+      puts bestCanidate.inspect
+      puts currentGen
     end
 		# evaluate the population
-		eval.call(population)
+		population = eval.call(population)
 		if(options[:greaterBetter])
 			sortedPopulation = population.sort{ |x , y| y.fitness <=> x.fitness }
 		else
@@ -32,7 +34,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 
 		if(options[:totalPopReplace] == false)
 			# Do not replace every organism
-			selection(sortedPopulation.clone(), options[:selectionStyle])
+			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
 			# mate and replace
 			results = mates[0].mate(mates[1])
@@ -47,7 +49,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			have = 0
 			newPopulation = Array.new(population.size(), GeneticObject.new)
 			while have < needed do
-				selection(sortedPopulation.clone(), options[:selectionStyle])
+				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
 				# mate and put them into new pop
 				results = mates[0].mate(mates[1])
@@ -55,14 +57,19 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 				results[1].mutate() if Random.new.rand() < options[:mutation_percent]
 				newPopulation[have] = results[0]
 				newPopulation[have+1] = results[1] if (have+1) < needed
+        have += 2
 			end
 			population = newPopulation
 		end
+    currentGen += 1
 	end
 	return bestCanidate
 end
 
 def exceedThreshold(greaterBetter, val, threshold)
+  if(val == nil)
+    return false
+  end
 	if(greaterBetter)
 		return val>=threshold
 	else
