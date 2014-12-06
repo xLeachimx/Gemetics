@@ -1,6 +1,6 @@
 # Contains all testing materials
 
-require 'lib/Gemetics'
+require 'Gemetics'
 
 class GeneticString < GeneticObject
 	attr_accessor :chromosome

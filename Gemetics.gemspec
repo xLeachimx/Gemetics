@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = "A simple gem to help in the creation of genetic algorithms"
   s.authors     = ["Michael Huelsman"]
   s.email       = 'michael.huelsman@gmail.com'
-  s.files       = ["lib/"]
+  s.files       = ["lib/Gemetics.rb"]
   s.homepage    = ''
   s.license       = 'MIT'
 end
