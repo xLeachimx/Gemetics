@@ -65,7 +65,9 @@ Use
 To run a genetic algorithm call this function
 
 ```ruby
-runAlgorithm(initialPopulation, eval, threshold, options)
+def runAlgorithm(initialPopulation, eval, threshold, options)
+	...
+end
 ```
 
 Where
