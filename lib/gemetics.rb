@@ -4,7 +4,7 @@ def default_GA_options()
 	 totalPopReplace: true,
 	 genMax: 1000,
 	 selectionStyle: 'tournament',
-	 mutation_percent: 0.05,
+	 mutationPercent: 0.05,
 	 debug: false,
   }
 end
@@ -14,6 +14,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	if(options == nil)
 		options = default_GA_options
 	end
+	validOptions(options) # Raises error if options are not correct
 	currentGen = 0
 	bestCanidate = initialPopulation[0]
 	population = initialPopulation
@@ -39,7 +40,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			# mate and replace
 			reaplaced = []
 			for i in 0...results.size()
-				results[i].mutate() if Random.new.rand() < options[:mutation_percent]
+				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
 				while(!replaced.includes?(temp)) do
 					temp = Random.new.rand(population.size())
@@ -58,7 +59,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 				# mate and put them into new pop
 				results = mates[0].mate(mates[1])
 				for i in 0...results.size()
-					results[i].mutate() if Random.new.rand() < options[:mutation_percent]
+					results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 					newPopulation[have+i] = result[i] if (have+i) < needed
 				end
 				have += results.size()
@@ -69,6 +70,8 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	end
 	return bestCanidate
 end
+
+# Internal Logic
 
 def exceedThreshold(greaterBetter, val, threshold)
   if(val == nil)
@@ -85,9 +88,10 @@ def selection(population, type)
 	# select mates
 	if(type == 'tournament')
 		return tournamentSelection(population)
-	else
+	elsif(type == 'best')
 		return bestSelection(population)
 	end
+	raise 'Problem with selection type'
 end
 
 def tournamentSelection(population)
@@ -97,6 +101,44 @@ end
 
 def bestSelection(population)
 	return population[0..1]
+end
+
+# Validation
+
+# greaterBetter: true,
+# totalPopReplace: true,
+# genMax: 1000,
+# selectionStyle: 'tournament',
+# mutation_percent: 0.05,
+# debug: false,
+
+def validOptions(options)
+	raise 'Required Option Missing' if !hasRequiredOptions(options)
+	raise 'Options Not Within Limits' if !withinLimits(options)
+	return true
+end
+
+def hasRequiredOptions(options)
+	return false if !options.has_key?(:greaterBetter)
+	return false if !options.has_key?(:totalPopReplace)
+	return false if !options.has_key?(:genMax)
+	return false if !options.has_key?(:mutation_percent)
+	return false if !options.has_key?(:debug)
+	return true
+end
+
+def withinLimits(options)
+	possibleGreaterBetter = [true, false]
+	possibleTotalPopReplace = [true, false]
+	possibleDebug = [true, false]
+	possibleSelectionStyle = ['tournament', 'best']
+	return false if !(possibleGreaterBetter.includes?(options[:greaterBetter]))
+	return false if !(possibleTotalPopReplace.includes?(options[:totalPopReplace]))
+	return false if !(options[:genMax]>0)
+	return false if !(possibleSelectionStyle.includes?(options[:selectionStyle]))
+	return false if !(options[:mutationPercent]>0.0)
+	return false if !(possibleDebug.includes?(options[:debug]))
+	return true
 end
 
 class GeneticObject
