@@ -19,10 +19,10 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	bestCanidate = initialPopulation[0]
 	population = initialPopulation
 	while(continue?(bestCanidate.fitness, threshold, currentGen, options)) do
-    if(options[:debug])
-      puts bestCanidate.inspect
-      puts currentGen
-    end
+	    if(options[:debug])
+	      puts bestCanidate.inspect
+	      puts currentGen
+	    end
 		# evaluate the population
 		population = eval.call(population)
 		if(options[:greaterBetter])
@@ -39,7 +39,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 
 			# mate and replace
 			results = mateOrgs(mates[0], mates[1])
-			reaplaced = []
+			replaced = []
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
@@ -67,6 +67,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			end
 			population = newPopulation
 		end
+	# Increment generations
     currentGen += 1
 	end
 	return bestCanidate
