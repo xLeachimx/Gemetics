@@ -57,11 +57,19 @@ Use
 =======
 To run a genetic algorithm call this function
 
+##For versions < 0.0.3:
 ```ruby
 def runAlgorithm(initialPopulation, eval, threshold, options)
 	...
 end
 ```
+##For all other versions:
+```ruby
+def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
+	...
+end
+```
+
 Returns the best canidate solution when done
 
 Where
