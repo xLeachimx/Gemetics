@@ -9,7 +9,7 @@ def default_GA_options()
   }
 end
 
-def runAlgorithm(initialPopulation, eval, threshold, options)
+def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
   # make sure options is assigned
 	if(options == nil)
 		options = default_GA_options
@@ -20,7 +20,9 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	population = initialPopulation
 	while(continue?(bestCanidate.fitness, threshold, currentGen, options)) do
 	    if(options[:debug])
+	    	puts 'Best Canidate Soultion:'
 	      puts bestCanidate.inspect
+        puts 'Current Generation:'
 	      puts currentGen
 	    end
 		# evaluate the population
@@ -67,7 +69,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			end
 			population = newPopulation
 		end
-	# Increment generations
+    # Increment generations
     currentGen += 1
 	end
 	return bestCanidate
