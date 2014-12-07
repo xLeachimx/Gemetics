@@ -100,3 +100,5 @@ Options
 |mutation_percent   |float >= 0                    |
 |debug              |true/false                    |
 |elitism            |0 <= integer < population.size|
+
+*Note: version < 0.0.3 don't have elitism as an option
