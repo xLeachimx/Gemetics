@@ -60,6 +60,7 @@ def runTest()
   options[:mutation_percent] = 0.02
   options[:genMax] = 10000
   options[:selectionStlye] = 'best'
+  options[:elitism] = 2
   initialPop = Array.new(100)
   for i in 0...initialPop.size()
     initialPop[i] = GeneticString.new()
