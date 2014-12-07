@@ -12,7 +12,8 @@ gem install gemetics
 Including in project
 ========
 ```ruby
-require 'gemetics'
+require 'gemetics' # For the algorithms
+require 'gentic_object' # For the base class
 ```
 ========
 Before Using
@@ -20,6 +21,8 @@ Before Using
 First you need to create a custom subclass of the GeneticObject class
 
 ```ruby
+require 'genetic_object'
+
 class MyGeneticObject < GeneticObject
 	def mate(other)
 		...
