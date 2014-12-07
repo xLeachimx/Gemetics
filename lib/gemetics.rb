@@ -18,7 +18,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 	currentGen = 0
 	bestCanidate = initialPopulation[0]
 	population = initialPopulation
-	while(!exceedThreshold(options[:greaterBetter], bestCanidate.fitness, threshold) && currentGen < options[:genMax]) do
+	while(continue?(bestCanidate.fitness, threshold, currentGen, options)) do
     if(options[:debug])
       puts bestCanidate.inspect
       puts currentGen
@@ -38,6 +38,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
 			# mate and replace
+			results = mateOrgs(mates[0], mates[1])
 			reaplaced = []
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
@@ -57,7 +58,7 @@ def runAlgorithm(initialPopulation, eval, threshold, options)
 				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
 				# mate and put them into new pop
-				results = mates[0].mate(mates[1])
+				results = mateOrgs(mates[0], mates[1])
 				for i in 0...results.size()
 					results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 					newPopulation[have+i] = result[i] if (have+i) < needed
@@ -73,15 +74,22 @@ end
 
 # Internal Logic
 
-def exceedThreshold(greaterBetter, val, threshold)
-  if(val == nil)
-    return false
-  end
+def continue?(highestFitness, threshold, currentGen, options)
+	return false if exceedsThreshold?(options[:greaterBetter], highestFitness, threshold)
+	return false if currentGen > options[:maxGen]
+	return true
+end
+
+def exceedsThreshold?(greaterBetter, val, threshold)
+	if(val == nil)
+	return false
+	end
 	if(greaterBetter)
 		return val>=threshold
 	else
 		return val<=threshold
 	end
+	return false
 end
 
 def selection(population, type)
@@ -101,6 +109,10 @@ end
 
 def bestSelection(population)
 	return population[0..1]
+end
+
+def mateOrgs(one, two)
+	return one.mate(two)
 end
 
 # Validation
