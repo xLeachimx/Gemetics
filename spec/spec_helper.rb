@@ -2,6 +2,7 @@ require 'rubygems'
 require 'factory_girl'
 
 require_relative '../lib/genetic_object'
+require_relative '../lib/gemetics'
 require_relative '../spec/factories/genetic_object'
 
 

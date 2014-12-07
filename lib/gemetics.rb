@@ -2,13 +2,13 @@ require_relative 'genetic_object'
 
 def default_GA_options()
   return {
-	 greaterBetter: true,
-	 totalPopReplace: true,
-	 genMax: 1000,
-	 selectionStyle: 'tournament',
-	 mutationPercent: 0.05,
-   elitism: 0,
-	 debug: false,
+	greaterBetter: true,
+	totalPopReplace: true,
+	genMax: 1000,
+	selectionStyle: 'tournament',
+	mutationPercent: 0.05,
+	elitism: 0,
+	debug: false,
   }
 end
 
