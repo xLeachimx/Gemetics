@@ -81,12 +81,14 @@ Options
 |selectionStyle     |'tournament'|Determines selection type                                               |
 |mutation_percent   |0.05        |Determines percentage of offspring that are mutated                     |
 |debug              |false       |If true will output debug info                                          |
+|elitism            |0           |Determines the number of perserved top canidate solutions               |
 
-|Option             |Values(Possible)      |
-|:-----------------:|:--------------------:|
-|greaterBetter      |true/false            |
-|totalPopReplace    |true/false            |
-|genMax             |integer > 0           |
-|selectionStyle     |'tournament'/'best'   |
-|mutation_percent   |float >= 0            |
-|debug              |true/false            |
+|Option             |Values(Possible)              |
+|:-----------------:|:----------------------------:|
+|greaterBetter      |true/false                    |
+|totalPopReplace    |true/false                    |
+|genMax             |integer > 0                   |
+|selectionStyle     |'tournament'/'best'           |
+|mutation_percent   |float >= 0                    |
+|debug              |true/false                    |
+|elitism            |0 <= integer < population.size|
