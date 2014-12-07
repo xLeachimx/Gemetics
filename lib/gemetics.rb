@@ -5,6 +5,7 @@ def default_GA_options()
 	 genMax: 1000,
 	 selectionStyle: 'tournament',
 	 mutationPercent: 0.05,
+   elitism: 0,
 	 debug: false,
   }
 end
@@ -14,7 +15,7 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 	if(options == nil)
 		options = default_GA_options
 	end
-	validOptions(options) # Raises error if options are not correct
+	validOptions(options,population.size()) # Raises error if options are not correct
 	currentGen = 0
 	bestCanidate = initialPopulation[0]
 	population = initialPopulation
@@ -42,6 +43,12 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			# mate and replace
 			results = mateOrgs(mates[0], mates[1])
 			replaced = []
+      if(options[:elitism] > 0)
+        population = sortedPopulation
+        for i in 0...options[:elitism]
+          replaced.append(0)
+        end
+      end
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
@@ -56,6 +63,16 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			needed = population.size()
 			have = 0
 			newPopulation = Array.new(population.size(), GeneticObject.new)
+      if(option[:elitism] > 0)
+        if(options[:greaterBetter])
+          sortedPopulation = population.sort{ |x , y| y.fitness <=> x.fitness }
+        else
+          sortedPopulation = population.sort{ |x , y| x.fitness <=> y.fitness }
+        end
+        for i in 0...options[:elitism]
+          newPopulation[i] = sortedPopulation[i]
+        end
+      end
 			while have < needed do
 				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
@@ -120,9 +137,9 @@ end
 
 # Validation
 
-def validOptions(options)
+def validOptions(options, populationSize)
 	raise 'Required Option Missing' if !hasRequiredOptions(options)
-	raise 'Options Not Within Limits' if !withinLimits(options)
+	raise 'Options Not Within Limits' if !withinLimits(options, populationSize)
 	return true
 end
 
@@ -132,10 +149,11 @@ def hasRequiredOptions(options)
 	return false if !options.has_key?(:genMax)
 	return false if !options.has_key?(:mutation_percent)
 	return false if !options.has_key?(:debug)
+  return false if !options.has_key?(:elitism)
 	return true
 end
 
-def withinLimits(options)
+def withinLimits(options, populationSize)
 	possibleGreaterBetter = [true, false]
 	possibleTotalPopReplace = [true, false]
 	possibleDebug = [true, false]
@@ -146,6 +164,7 @@ def withinLimits(options)
 	return false if !(possibleSelectionStyle.includes?(options[:selectionStyle]))
 	return false if !(options[:mutationPercent]>0.0)
 	return false if !(possibleDebug.includes?(options[:debug]))
+  return false if !(options[:elitism]>0 && options<populationSize)
 	return true
 end
 
