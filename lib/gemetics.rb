@@ -160,12 +160,12 @@ def withinLimits(options, populationSize)
 	possibleTotalPopReplace = [true, false]
 	possibleDebug = [true, false]
 	possibleSelectionStyle = ['tournament', 'best']
-	return false if !(possibleGreaterBetter.includes?(options[:greaterBetter]))
-	return false if !(possibleTotalPopReplace.includes?(options[:totalPopReplace]))
+	return false if !(possibleGreaterBetter.include?(options[:greaterBetter]))
+	return false if !(possibleTotalPopReplace.include?(options[:totalPopReplace]))
 	return false if !(options[:genMax]>0)
-	return false if !(possibleSelectionStyle.includes?(options[:selectionStyle]))
+	return false if !(possibleSelectionStyle.include?(options[:selectionStyle]))
 	return false if !(options[:mutationPercent]>0.0)
-	return false if !(possibleDebug.includes?(options[:debug]))
-  return false if !(options[:elitism]>0 && options<populationSize)
+	return false if !(possibleDebug.include?(options[:debug]))
+  return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
 	return true
 end
