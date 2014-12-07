@@ -105,13 +105,6 @@ end
 
 # Validation
 
-# greaterBetter: true,
-# totalPopReplace: true,
-# genMax: 1000,
-# selectionStyle: 'tournament',
-# mutation_percent: 0.05,
-# debug: false,
-
 def validOptions(options)
 	raise 'Required Option Missing' if !hasRequiredOptions(options)
 	raise 'Options Not Within Limits' if !withinLimits(options)
