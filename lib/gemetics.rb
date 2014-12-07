@@ -1,3 +1,5 @@
+require_relative 'genetic_object'
+
 def default_GA_options()
   return {
 	 greaterBetter: true,
@@ -166,19 +168,4 @@ def withinLimits(options, populationSize)
 	return false if !(possibleDebug.includes?(options[:debug]))
   return false if !(options[:elitism]>0 && options<populationSize)
 	return true
-end
-
-class GeneticObject
-	attr_accessor :fitness
-
-	def initialize()
-	end
-
-	def mutate()
-		raise 'Method Not Implemented'
-	end
-
-	def mate(other)
-		raise 'Meothd Not Implemented'
-	end
 end
