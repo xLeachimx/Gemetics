@@ -155,7 +155,7 @@ describe 'Option Validation' do
 				}
 			}
 			it 'fails vaildation' do
-				expect(dependentsOptionsWithinLimits(options,1)).to be(false)
+				expect(dependentOptionsWithinLimits(options,1)).to be(false)
 			end
 		end
 	end

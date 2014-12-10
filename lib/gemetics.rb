@@ -142,12 +142,12 @@ def tournamentSelection(population, size)
 	selection = Random.new.rand()
 	for member in subPop
 		selection -= (member.fitness/additiveFitness)
-		if(selection < 0) result.append(member)
+		result.append(member) if selection <= 0
 	end
 	selection = Random.new.rand()
 	for member in subPop
 		selection -= (member.fitness/additiveFitness)
-		if(selection < 0) result.append(member)
+		result.append(member) if selection <= 0
 	end
 	result.append(subPop.pop())while result.size() < 2
 	return result
