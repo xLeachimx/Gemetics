@@ -165,17 +165,27 @@ end
 
 def validOptions(options, populationSize)
 	raise 'Required Option Missing' if !hasRequiredOptions(options)
+	raise 'Required Dependent Options Missing' if !hasRequiredDependentOptions(options)
 	raise 'Options Not Within Limits' if !withinLimits(options, populationSize)
+	raise 'Dependent Options Not Within Limits' if !dependentOptionsWithinLimits(options, populationSize)
 	return true
 end
 
 def hasRequiredOptions(options)
 	return false if !options.has_key?(:greaterBetter)
 	return false if !options.has_key?(:totalPopReplace)
+	return false if !options.has_key?(:selectionStyle)
 	return false if !options.has_key?(:genMax)
 	return false if !options.has_key?(:mutation_percent)
 	return false if !options.has_key?(:debug)
 	return false if !options.has_key?(:elitism)
+	return true
+end
+
+def hasRequiredDependentOptions(options)
+	if(options[:selectionStyle] == 'tournament')
+		return false if !options.has_key?(:tournamentSize)
+	end
 	return true
 end
 
@@ -192,4 +202,11 @@ def withinLimits(options, populationSize)
 	return false if !(possibleDebug.include?(options[:debug]))
 	return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
 	return true
+end
+
+def dependentOptionsWithinLimits(options, populationSize)
+	if(options[:selectionStyle] == 'tournament')
+		return false if !(options[:tournamentSize]>0 && options[:tournamentSize] <= populationSize)
+	end
+	return false
 end
