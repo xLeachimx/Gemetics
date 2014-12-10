@@ -127,9 +127,13 @@ def selection(population, options)
 		return tournamentSelection(population, options[:tournamentSize])
 	elsif(options[:selectionStyle] == 'best')
 		return bestSelection(population)
+	elsif(options[:selectionStyle] == 'roulette')
+		return 
 	end
 	raise 'Problem with selection type'
 end
+
+# Selection algorithms are based on population being sorted
 
 def tournamentSelection(population, size)
 	population = population.shuffle
@@ -142,12 +146,16 @@ def tournamentSelection(population, size)
 	selection = Random.new.rand()
 	for member in subPop
 		selection -= (member.fitness/additiveFitness)
-		result.append(member) if selection <= 0
+		if selection <= 0
+			result.append(member)
+		end
 	end
 	selection = Random.new.rand()
 	for member in subPop
 		selection -= (member.fitness/additiveFitness)
-		result.append(member) if selection <= 0
+		if selection <= 0
+			result.append(member)
+		end
 	end
 	result.append(subPop.pop())while result.size() < 2
 	return result
@@ -155,6 +163,31 @@ end
 
 def bestSelection(population)
 	return population[0..1]
+end
+
+def rouletteSelection(population)
+	additiveFitness = 0.0
+	for member in population
+		additiveFitness += member.fitness
+	end
+
+	selection = Random.new.rand()
+	for member in population
+		selection -= (member.fitness/additiveFitness)
+		if selection <= 0
+			result.append(member)
+		end
+	end
+	
+	selection = Random.new.rand()
+	for member in population
+		selection -= (member.fitness/additiveFitness)
+		if selection <= 0
+			result.append(member)
+		end
+	end
+
+	return result
 end
 
 def mateOrgs(one, two)
@@ -193,7 +226,7 @@ def withinLimits(options, populationSize)
 	possibleGreaterBetter = [true, false]
 	possibleTotalPopReplace = [true, false]
 	possibleDebug = [true, false]
-	possibleSelectionStyle = ['tournament', 'best']
+	possibleSelectionStyle = ['tournament', 'best', 'roulette']
 	return false if !(possibleGreaterBetter.include?(options[:greaterBetter]))
 	return false if !(possibleTotalPopReplace.include?(options[:totalPopReplace]))
 	return false if !(options[:genMax]>0)
