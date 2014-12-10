@@ -1,13 +1,13 @@
 require 'gemetics'
 require 'genetic_object'
 
-class GeneticString < genetic_object
+class GeneticString < GeneticObject
 	attr_accessor :chromosome
-	@@possible_characters = (['a'...'z'] + ['A'...'Z']).append(',').append(' ')
+	@@possible_characters = (('a'...'z').to_a + ('A'...'Z').to_a).push(',').push(' ')
 
-	def initalize(size)
+	def initalize()
 		@chromosome = ''
-		for i in 0...size
+		for i in 0...12
 			selection = Random.new.rand(@@possible_characters.size())
 			@chromosome.concat(@@possible_characters[selection])
 		end
@@ -38,3 +38,20 @@ class GeneticString < genetic_object
 		@chromosome[location_selection] = @@possible_characters[character_selection]
 	end
 end
+
+def evaluation(population)
+	goal = 'Hello, World'
+	for i in 0...population.size()
+		population[i].fitness = population[i].compare(goal)
+	end
+	return population
+end
+
+def runTest()
+	options = default_GA_options()
+	options[:debug] = true
+	options[:greaterBetter] = false
+	puts runGeneticAlgorithm(Array.new(100, GeneticString.new()), method( :evaluation ), 0, options)
+end
+
+runTest()
