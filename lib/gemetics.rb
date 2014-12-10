@@ -16,7 +16,7 @@ end
 def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
   # make sure options is assigned
 	if(options == nil)
-		options = default_GA_options
+		options = default_GA_options()
 	end
 	validOptions(options,population.size()) # Raises error if options are not correct
 	currentGen = 0
@@ -25,9 +25,9 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 	while(continue?(bestCanidate.fitness, threshold, currentGen, options)) do
 	    if(options[:debug])
 	    	puts 'Best Canidate Soultion:'
-	      puts bestCanidate.inspect
-        puts 'Current Generation:'
-	      puts currentGen
+	     	puts bestCanidate.inspect
+        	puts 'Current Generation:'
+	     	puts currentGen
 	    end
 		# evaluate the population
 		population = eval.call(population)
@@ -128,7 +128,7 @@ def selection(population, options)
 	elsif(options[:selectionStyle] == 'best')
 		return bestSelection(population)
 	elsif(options[:selectionStyle] == 'roulette')
-		return 
+		return rouletteSelection(population)
 	end
 	raise 'Problem with selection type'
 end
@@ -157,7 +157,7 @@ def tournamentSelection(population, size)
 			result.append(member)
 		end
 	end
-	result.append(subPop.pop())while result.size() < 2
+	result.append(subPop.pop()) while result.size() < 2
 	return result
 end
 
