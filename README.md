@@ -82,7 +82,7 @@ Where
 * options is the options you wish to run the GA with(nil resorts to default)
 
 =======
-Options
+Required Options
 =======
 |Option             |Default     |Purpose                                                                 |
 |:-----------------:|:----------:|:-----------------------------------------------------------------------|
@@ -104,4 +104,14 @@ Options
 |debug              |true/false                    |
 |elitism            |0 <= integer < population.size|
 
-*Note: version < 0.0.3 don't have elitism as an option
+*Note: versions < 0.0.3 don't have elitism as an option
+
+
+=======
+Dependent options
+=======
+|Option         |Dependent On                  |Values(Possible)|
+|:-------------:|:----------------------------:|:--------------:|
+|tournamentSize |selectionStyle == 'tournament'|integer > 0     |
+
+*Note: versions <= 0.0.3 don't have these options

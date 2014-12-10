@@ -9,6 +9,7 @@ def default_GA_options()
 	mutationPercent: 0.05,
 	elitism: 0,
 	debug: false,
+	tournamentSize: 10,
   }
 end
 
@@ -110,7 +111,7 @@ end
 
 def exceedsThreshold?(greaterBetter, val, threshold)
 	if(val == nil)
-	return false
+		return false
 	end
 	if(greaterBetter)
 		return val>=threshold
@@ -120,19 +121,19 @@ def exceedsThreshold?(greaterBetter, val, threshold)
 	return false
 end
 
-def selection(population, type)
+def selection(population, options)
 	# select mates
-	if(type == 'tournament')
-		return tournamentSelection(population)
-	elsif(type == 'best')
+	if(options[:selectionStyle] == 'tournament')
+		return tournamentSelection(population, options[:tournamentSize])
+	elsif(options[:selectionStyle] == 'best')
 		return bestSelection(population)
 	end
 	raise 'Problem with selection type'
 end
 
-def tournamentSelection(population)
+def tournamentSelection(population, size)
 	population = population.shuffle
-	subPop = population[0...10]
+	subPop = population[0...size]
 	additiveFitness = 0
 	result = []
 	for member in subPop
