@@ -9,6 +9,7 @@ def default_GA_options()
 	mutationPercent: 0.05,
 	elitism: 0,
 	debug: false,
+	tournamentSize: 10,
   }
 end
 
@@ -41,16 +42,21 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 		if(options[:totalPopReplace] == false)
 			# Do not replace every organism
 			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
+			if(options[:debug])
+				puts "Selected individuals:"
+				puts mates[0].inspect
+				puts mates[1].inspect
+			end
 
 			# mate and replace
 			results = mateOrgs(mates[0], mates[1])
 			replaced = []
-      if(options[:elitism] > 0)
-        population = sortedPopulation
-        for i in 0...options[:elitism]
-          replaced.append(0)
-        end
-      end
+			if(options[:elitism] > 0)
+				population = sortedPopulation
+				for i in 0...options[:elitism]
+				  replaced.append(0)
+				end
+			end
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
@@ -65,18 +71,19 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			needed = population.size()
 			have = 0
 			newPopulation = Array.new(population.size(), GeneticObject.new)
-      if(option[:elitism] > 0)
-        if(options[:greaterBetter])
-          sortedPopulation = population.sort{ |x , y| y.fitness <=> x.fitness }
-        else
-          sortedPopulation = population.sort{ |x , y| x.fitness <=> y.fitness }
-        end
-        for i in 0...options[:elitism]
-          newPopulation[i] = sortedPopulation[i]
-        end
-      end
+			if(option[:elitism] > 0)
+				for i in 0...options[:elitism]
+				  newPopulation[i] = sortedPopulation[i]
+				end
+			end
 			while have < needed do
 				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
+
+				if(options[:debug])
+					puts "Selected individuals:"
+					puts mates[0].inspect
+					puts mates[1].inspect
+				end
 
 				# mate and put them into new pop
 				results = mateOrgs(mates[0], mates[1])
@@ -104,7 +111,7 @@ end
 
 def exceedsThreshold?(greaterBetter, val, threshold)
 	if(val == nil)
-	return false
+		return false
 	end
 	if(greaterBetter)
 		return val>=threshold
@@ -114,19 +121,36 @@ def exceedsThreshold?(greaterBetter, val, threshold)
 	return false
 end
 
-def selection(population, type)
+def selection(population, options)
 	# select mates
-	if(type == 'tournament')
-		return tournamentSelection(population)
-	elsif(type == 'best')
+	if(options[:selectionStyle] == 'tournament')
+		return tournamentSelection(population, options[:tournamentSize])
+	elsif(options[:selectionStyle] == 'best')
 		return bestSelection(population)
 	end
 	raise 'Problem with selection type'
 end
 
-def tournamentSelection(population)
+def tournamentSelection(population, size)
 	population = population.shuffle
-	return population[0..10].sort{ |x , y| x.fitness <=> y.fitness }[0..1]
+	subPop = population[0...size]
+	additiveFitness = 0
+	result = []
+	for member in subPop
+		additiveFitness += member.fitness
+	end
+	selection = Random.new.rand()
+	for member in subPop
+		selection -= (member.fitness/additiveFitness)
+		result.append(member) if selection <= 0
+	end
+	selection = Random.new.rand()
+	for member in subPop
+		selection -= (member.fitness/additiveFitness)
+		result.append(member) if selection <= 0
+	end
+	result.append(subPop.pop())while result.size() < 2
+	return result
 end
 
 def bestSelection(population)
@@ -141,17 +165,27 @@ end
 
 def validOptions(options, populationSize)
 	raise 'Required Option Missing' if !hasRequiredOptions(options)
+	raise 'Required Dependent Options Missing' if !hasRequiredDependentOptions(options)
 	raise 'Options Not Within Limits' if !withinLimits(options, populationSize)
+	raise 'Dependent Options Not Within Limits' if !dependentOptionsWithinLimits(options, populationSize)
 	return true
 end
 
 def hasRequiredOptions(options)
 	return false if !options.has_key?(:greaterBetter)
 	return false if !options.has_key?(:totalPopReplace)
+	return false if !options.has_key?(:selectionStyle)
 	return false if !options.has_key?(:genMax)
 	return false if !options.has_key?(:mutation_percent)
 	return false if !options.has_key?(:debug)
-  return false if !options.has_key?(:elitism)
+	return false if !options.has_key?(:elitism)
+	return true
+end
+
+def hasRequiredDependentOptions(options)
+	if(options[:selectionStyle] == 'tournament')
+		return false if !options.has_key?(:tournamentSize)
+	end
 	return true
 end
 
@@ -166,6 +200,13 @@ def withinLimits(options, populationSize)
 	return false if !(possibleSelectionStyle.include?(options[:selectionStyle]))
 	return false if !(options[:mutationPercent]>0.0)
 	return false if !(possibleDebug.include?(options[:debug]))
-  return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
+	return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
 	return true
+end
+
+def dependentOptionsWithinLimits(options, populationSize)
+	if(options[:selectionStyle] == 'tournament')
+		return false if !(options[:tournamentSize]>0 && options[:tournamentSize] <= populationSize)
+	end
+	return false
 end
