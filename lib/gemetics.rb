@@ -41,16 +41,18 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 		if(options[:totalPopReplace] == false)
 			# Do not replace every organism
 			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
+			if(options[:debug])
+			end
 
 			# mate and replace
 			results = mateOrgs(mates[0], mates[1])
 			replaced = []
-      if(options[:elitism] > 0)
-        population = sortedPopulation
-        for i in 0...options[:elitism]
-          replaced.append(0)
-        end
-      end
+			if(options[:elitism] > 0)
+				population = sortedPopulation
+				for i in 0...options[:elitism]
+				  replaced.append(0)
+				end
+			end
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
@@ -65,16 +67,11 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			needed = population.size()
 			have = 0
 			newPopulation = Array.new(population.size(), GeneticObject.new)
-      if(option[:elitism] > 0)
-        if(options[:greaterBetter])
-          sortedPopulation = population.sort{ |x , y| y.fitness <=> x.fitness }
-        else
-          sortedPopulation = population.sort{ |x , y| x.fitness <=> y.fitness }
-        end
-        for i in 0...options[:elitism]
-          newPopulation[i] = sortedPopulation[i]
-        end
-      end
+			if(option[:elitism] > 0)
+				for i in 0...options[:elitism]
+				  newPopulation[i] = sortedPopulation[i]
+				end
+			end
 			while have < needed do
 				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 
@@ -126,7 +123,24 @@ end
 
 def tournamentSelection(population)
 	population = population.shuffle
-	return population[0..10].sort{ |x , y| x.fitness <=> y.fitness }[0..1]
+	subPop = population[0...10]
+	additiveFitness = 0
+	result = []
+	for member in subPop
+		additiveFitness += member.fitness
+	end
+	selection = Random.new.rand()
+	for member in subPop
+		selection -= (member.fitness/additiveFitness)
+		if(selection < 0) result.append(member)
+	end
+	selection = Random.new.rand()
+	for member in subPop
+		selection -= (member.fitness/additiveFitness)
+		if(selection < 0) result.append(member)
+	end
+	result.append(subPop.pop())while result.size() < 2
+	return result
 end
 
 def bestSelection(population)
