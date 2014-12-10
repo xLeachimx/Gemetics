@@ -42,6 +42,9 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			# Do not replace every organism
 			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
 			if(options[:debug])
+				puts "Selected individuals:"
+				puts mates[0].inspect
+				puts mates[1].inspect
 			end
 
 			# mate and replace
@@ -74,6 +77,12 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			end
 			while have < needed do
 				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
+
+				if(options[:debug])
+					puts "Selected individuals:"
+					puts mates[0].inspect
+					puts mates[1].inspect
+				end
 
 				# mate and put them into new pop
 				results = mateOrgs(mates[0], mates[1])
@@ -165,7 +174,7 @@ def hasRequiredOptions(options)
 	return false if !options.has_key?(:genMax)
 	return false if !options.has_key?(:mutation_percent)
 	return false if !options.has_key?(:debug)
-  return false if !options.has_key?(:elitism)
+	return false if !options.has_key?(:elitism)
 	return true
 end
 
@@ -180,6 +189,6 @@ def withinLimits(options, populationSize)
 	return false if !(possibleSelectionStyle.include?(options[:selectionStyle]))
 	return false if !(options[:mutationPercent]>0.0)
 	return false if !(possibleDebug.include?(options[:debug]))
-  return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
+	return false if !(options[:elitism]>=0 && options[:elitism]<populationSize)
 	return true
 end
