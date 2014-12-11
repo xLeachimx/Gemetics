@@ -110,8 +110,8 @@ Required Options
 =======
 Dependent options
 =======
-|Option         |Dependent On                  |Values(Possible)|
-|:-------------:|:----------------------------:|:--------------:|
-|tournamentSize |selectionStyle == 'tournament'|integer > 0     |
+|Option         |Dependent On                  |Values(Possible)                   |Purpose                               |
+|:-------------:|:----------------------------:|:---------------------------------:|:-------------------------------------|
+|tournamentSize |selectionStyle == 'tournament'| 0 < integer < population.size     |Determines the size of each tournament|
 
 *Note: versions <= 0.0.3 don't have these options

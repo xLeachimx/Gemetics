@@ -14,39 +14,42 @@ def default_GA_options()
 end
 
 def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
-  # make sure options is assigned
+	# make sure options is assigned
 	if(options == nil)
-		options = default_GA_options
+		options = default_GA_options()
 	end
-	validOptions(options,population.size()) # Raises error if options are not correct
+	validOptions(options,initialPopulation.size()) # Raises error if options are not correct
 	currentGen = 0
 	bestCanidate = initialPopulation[0]
 	population = initialPopulation
 	while(continue?(bestCanidate.fitness, threshold, currentGen, options)) do
-	    if(options[:debug])
-	    	puts 'Best Canidate Soultion:'
-	      puts bestCanidate.inspect
-        puts 'Current Generation:'
-	      puts currentGen
-	    end
 		# evaluate the population
 		population = eval.call(population)
-		if(options[:greaterBetter])
+
+	    if(options[:greaterBetter])
 			sortedPopulation = population.sort{ |x , y| y.fitness <=> x.fitness }
 		else
 			sortedPopulation = population.sort{ |x , y| x.fitness <=> y.fitness }
 		end
 		bestCanidate = population[0].clone
 
+		if(options[:debug])
+	    	puts 'Best Canidate Soultion:'
+	     	puts bestCanidate.inspect
+        	puts 'Current Generation:'
+	     	puts currentGen
+	     	puts 'Average Fitness:'
+	     	cumulative = 0
+	     	for org in population
+	     		cumulative += org.fitness
+	     	end
+	     	puts cumulative/population.size()
+	    end
+
 
 		if(options[:totalPopReplace] == false)
 			# Do not replace every organism
-			mates = selection(sortedPopulation.clone(), options[:selectionStyle])
-			if(options[:debug])
-				puts "Selected individuals:"
-				puts mates[0].inspect
-				puts mates[1].inspect
-			end
+			mates = selection(sortedPopulation.clone(), options)
 
 			# mate and replace
 			results = mateOrgs(mates[0], mates[1])
@@ -54,16 +57,16 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			if(options[:elitism] > 0)
 				population = sortedPopulation
 				for i in 0...options[:elitism]
-				  replaced.append(0)
+				  replaced.append(i)
 				end
 			end
 			for i in 0...results.size()
 				results[i].mutate() if Random.new.rand() < options[:mutationPercent]
 				temp = Random.new.rand(population.size())
-				while(!replaced.includes?(temp)) do
+				while(replaced.include?(temp)) do
 					temp = Random.new.rand(population.size())
 				end
-				replaced.append(temp)
+				replaced.push(temp)
 				population[replaced[-1]] = results[i]
 			end
 		else
@@ -71,25 +74,19 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			needed = population.size()
 			have = 0
 			newPopulation = Array.new(population.size(), GeneticObject.new)
-			if(option[:elitism] > 0)
+			if(options[:elitism] > 0)
 				for i in 0...options[:elitism]
 				  newPopulation[i] = sortedPopulation[i]
 				end
 			end
 			while have < needed do
-				mates = selection(sortedPopulation.clone(), options[:selectionStyle])
-
-				if(options[:debug])
-					puts "Selected individuals:"
-					puts mates[0].inspect
-					puts mates[1].inspect
-				end
+				mates = selection(sortedPopulation.clone(), options)
 
 				# mate and put them into new pop
 				results = mateOrgs(mates[0], mates[1])
 				for i in 0...results.size()
 					results[i].mutate() if Random.new.rand() < options[:mutationPercent]
-					newPopulation[have+i] = result[i] if (have+i) < needed
+					newPopulation[have+i] = results[i] if (have+i) < needed
 				end
 				have += results.size()
 			end
@@ -105,7 +102,7 @@ end
 
 def continue?(highestFitness, threshold, currentGen, options)
 	return false if exceedsThreshold?(options[:greaterBetter], highestFitness, threshold)
-	return false if currentGen > options[:maxGen]
+	return false if currentGen > options[:genMax]
 	return true
 end
 
@@ -128,7 +125,7 @@ def selection(population, options)
 	elsif(options[:selectionStyle] == 'best')
 		return bestSelection(population)
 	elsif(options[:selectionStyle] == 'roulette')
-		return 
+		return rouletteSelection(population)
 	end
 	raise 'Problem with selection type'
 end
@@ -143,21 +140,19 @@ def tournamentSelection(population, size)
 	for member in subPop
 		additiveFitness += member.fitness
 	end
-	selection = Random.new.rand()
 	for member in subPop
-		selection -= (member.fitness/additiveFitness)
-		if selection <= 0
-			result.append(member)
+		if Random.new.rand() <= (member.fitness/additiveFitness)
+			result.push(member)
+			break
 		end
 	end
-	selection = Random.new.rand()
 	for member in subPop
-		selection -= (member.fitness/additiveFitness)
-		if selection <= 0
-			result.append(member)
+		if Random.new.rand() <= (member.fitness/additiveFitness)
+			result.push(member)
+			break
 		end
 	end
-	result.append(subPop.pop())while result.size() < 2
+	result.push(subPop[0]) while result.size() < 2
 	return result
 end
 
@@ -171,22 +166,22 @@ def rouletteSelection(population)
 		additiveFitness += member.fitness
 	end
 
-	selection = Random.new.rand()
+	result = []
 	for member in population
-		selection -= (member.fitness/additiveFitness)
-		if selection <= 0
-			result.append(member)
+		if Random.new.rand() <= (member.fitness/additiveFitness)
+			result.push(member)
+			break
 		end
 	end
 	
-	selection = Random.new.rand()
 	for member in population
-		selection -= (member.fitness/additiveFitness)
-		if selection <= 0
-			result.append(member)
+		if Random.new.rand() <= (member.fitness/additiveFitness)
+			result.push(member)
+			break
 		end
 	end
 
+	result.push(population[0]) while result.size() < 2
 	return result
 end
 
@@ -209,7 +204,7 @@ def hasRequiredOptions(options)
 	return false if !options.has_key?(:totalPopReplace)
 	return false if !options.has_key?(:selectionStyle)
 	return false if !options.has_key?(:genMax)
-	return false if !options.has_key?(:mutation_percent)
+	return false if !options.has_key?(:mutationPercent)
 	return false if !options.has_key?(:debug)
 	return false if !options.has_key?(:elitism)
 	return true
@@ -239,7 +234,7 @@ end
 
 def dependentOptionsWithinLimits(options, populationSize)
 	if(options[:selectionStyle] == 'tournament')
-		return false if !(options[:tournamentSize]>0 && options[:tournamentSize] <= populationSize)
+		return false if !(options[:tournamentSize] > 0 && options[:tournamentSize] <= populationSize)
 	end
-	return false
+	return true
 end
