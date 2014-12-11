@@ -3,19 +3,20 @@ require 'genetic_object'
 
 class GeneticString < GeneticObject
 	attr_accessor :chromosome
-	@@possible_characters = (('a'...'z').to_a + ('A'...'Z').to_a).push(',').push(' ')
+	@@possible_characters = ('a'...'z').to_a + ('A'...'Z').to_a + [',', ' ', '.', '?', '!']
 
-	def initalize()
+	def initialize()
 		@chromosome = ''
-		for i in 0...12
+		for i in 0...13
 			selection = Random.new.rand(@@possible_characters.size())
 			@chromosome.concat(@@possible_characters[selection])
 		end
+		@fitness = 13
 	end
 
 	def compare(str)
-		if str.length() != str
-			raise 'Strings Not Same Length Cannot Compare' + @chromosome + ' and ' + str
+		if str.length() != @chromosome.length()
+			raise 'Strings Not Same Length Cannot Compare'
 		end
 		offcount = 0
 		for i in 0...str.length()
@@ -26,7 +27,7 @@ class GeneticString < GeneticObject
 
 	def mate(other)
 		crossPoint = Random.new.rand(@chromosome.length())
-		results = [GeneticString.new(@chromosome.length()), GeneticString.new(@chromosome.length())]
+		results = [GeneticString.new(), GeneticString.new()]
 		results[0].chromosome = @chromosome[0...crossPoint] + other.chromosome[crossPoint...other.chromosome.length()]
 		results[1].chromosome = other.chromosome[0...crossPoint] + @chromosome[crossPoint...@chromosome.length()]
 		return results
@@ -40,7 +41,7 @@ class GeneticString < GeneticObject
 end
 
 def evaluation(population)
-	goal = 'Hello, World'
+	goal = 'Hello, World!'
 	for i in 0...population.size()
 		population[i].fitness = population[i].compare(goal)
 	end
@@ -51,7 +52,15 @@ def runTest()
 	options = default_GA_options()
 	options[:debug] = true
 	options[:greaterBetter] = false
-	puts runGeneticAlgorithm(Array.new(100, GeneticString.new()), method( :evaluation ), 0, options)
+	options[:genMax] = 10000
+	options[:tournamentSize] = 30
+	options[:totalPopReplace] = true
+	options[:selectionStyle] = 'best'
+	pop = []
+	for i in 0...10000
+		pop.push(GeneticString.new())
+	end
+	puts runGeneticAlgorithm(pop, method( :evaluation ), 0, options).chromosome
 end
 
 runTest()
