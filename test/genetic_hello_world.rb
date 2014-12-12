@@ -53,11 +53,10 @@ def runTest()
 	options[:debug] = true
 	options[:greaterBetter] = false
 	options[:genMax] = 10000
-	options[:tournamentSize] = 30
 	options[:totalPopReplace] = true
 	options[:selectionStyle] = 'best'
 	pop = []
-	for i in 0...10000
+	for i in 0...100
 		pop.push(GeneticString.new())
 	end
 	puts runGeneticAlgorithm(pop, method( :evaluation ), 0, options).chromosome

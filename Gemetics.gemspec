@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'gemetics'
   s.version     = '0.1.0'
-  s.date        = '2014-12-06'
+  s.date        = '2014-12-10'
   s.summary     = "A genetic algorithm base"
   s.description = "A simple gem to help in the creation of genetic algorithms"
   s.authors     = ["Michael Huelsman"]
