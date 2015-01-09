@@ -3,7 +3,7 @@ require 'genetic_object'
 
 class GeneticString < GeneticObject
 	attr_accessor :chromosome
-	@@possible_characters = ('a'...'z').to_a + ('A'...'Z').to_a + [',', ' ', '.', '?', '!']
+	@@possible_characters = ('a'..'z').to_a + ('A'..'Z').to_a + [',', ' ', '.', '?', '!']
 
 	def initialize()
 		@chromosome = ''
