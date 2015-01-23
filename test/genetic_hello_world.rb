@@ -53,7 +53,7 @@ def runTest()
 	options[:debug] = true
 	options[:greaterBetter] = false
 	options[:genMax] = 10000
-	options[:totalPopReplace] = true
+	options[:totalPopReplace] = false
 	options[:selectionStyle] = 'best'
 	pop = []
 	for i in 0...100
