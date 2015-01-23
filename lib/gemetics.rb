@@ -57,7 +57,7 @@ def runGeneticAlgorithm(initialPopulation, eval, threshold, options)
 			if(options[:elitism] > 0)
 				population = sortedPopulation
 				for i in 0...options[:elitism]
-				  replaced.append(i)
+				  replaced.push(i)
 				end
 			end
 			for i in 0...results.size()
